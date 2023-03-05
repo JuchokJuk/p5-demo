@@ -3,11 +3,9 @@ import { sketch } from 'p5js-wrapper';
 let video;
 
 let noiseShader;
-let pixelationShader;
-let opacityShader;
+let pixelationAndOpacityShader;
 
 let buffer;
-let buffer2;
 
 let tick = 0;
 const videoDimensions = [3240, 1080]
@@ -19,14 +17,12 @@ sketch.preload = () => {
   video.loop();
   video.hide();
 
-  noiseShader = loadShader('noiseShader/shader.vert', 'noiseShader/shader.frag');
-  pixelationShader = loadShader('pixelationShader/shader.vert', 'pixelationShader/shader.frag');
-  opacityShader = loadShader('opacityShader/shader.vert', 'opacityShader/shader.frag');
+  noiseShader = loadShader('shaders/default.vert', 'shaders/noiseShader.frag');
+  pixelationAndOpacityShader = loadShader('shaders/default.vert', 'shaders/pixelationFadeShader.frag');
 }
 
 sketch.setup = () => {
   buffer = createGraphics(windowWidth, windowHeight, WEBGL);
-  buffer2 = createGraphics(windowWidth, windowHeight, WEBGL);
   createCanvas(windowWidth, windowHeight, WEBGL);
   noStroke();
 }
@@ -35,22 +31,25 @@ sketch.windowResized = () => {
   resizeCanvas(windowWidth, windowHeight);
 }
 
-const noiseFadeSpeeed = 0.004;
+const speed = 1;
+
+const noiseFadeSpeeed = 0.002 * speed;
+const pixelationFadeSpeeed = 0.8 * speed;
+const opacityFadeSpeeed = 0.007 * speed;
+
+const pixelationStep = 4;
+
 const noiseMin = 0;
-const noiseMax = 0.2;
-const pixelationFadeSpeeed = 1;
+const noiseMax = 0.15;
 const pixelationMin = 1;
 const pixelationMax = 100;
-const pixelationStep = 4;
-const opacityFadeSpeeed = 0.005;
 const opacityMin = 0;
 const opacityMax = 1;
 
 sketch.draw = () => {
   image(buffer, 0, 0);
   buffer.background(0);
-  image(buffer2, 0, 0);
-  buffer2.background(0);
+  background(0)
 
   noiseShader.setUniform('texture', video);
   noiseShader.setUniform('time', tick);
@@ -59,17 +58,14 @@ sketch.draw = () => {
   noiseShader.setUniform("noiseStrength", Math.max(noiseMin, noiseMax - tick * noiseFadeSpeeed));
   buffer.shader(noiseShader);
 
-  pixelationShader.setUniform('texture', buffer);
-  pixelationShader.setUniform("dimensions", [width, height]);
-  pixelationShader.setUniform('pixelSize', Math.max(pixelationMin, pixelationMax - ~~(tick * pixelationFadeSpeeed / pixelationStep) * pixelationStep));
-  buffer2.shader(pixelationShader);
+  pixelationAndOpacityShader.setUniform('texture', buffer);
+  pixelationAndOpacityShader.setUniform("dimensions", [width, height]);
+  pixelationAndOpacityShader.setUniform('pixelSize', Math.max(pixelationMin, pixelationMax - ~~(tick * pixelationFadeSpeeed / pixelationStep) * pixelationStep));
+  pixelationAndOpacityShader.setUniform('opacity', Math.min(opacityMax, opacityMin + tick * opacityFadeSpeeed));
+  shader(pixelationAndOpacityShader);
 
-  opacityShader.setUniform('texture', buffer2);
-  opacityShader.setUniform('opacity', Math.min(opacityMax, opacityMin + tick * opacityFadeSpeeed ));
-  shader(opacityShader);
 
   buffer.rect(0, 0, width, height);
-  buffer2.rect(0, 0, width, height);
   rect(0, 0, width, height);
   tick++;
 }
