@@ -8,15 +8,15 @@ uniform float pixelSize;
 uniform float opacity;
 
 void main() {
-    vec2 coords = vTexCoord;
+    vec2 coord = vTexCoord;
     // texture is loaded upside down and backwards by default, so flip it
-    coords.y = 1.0 - coords.y;
+    coord.y = 1.0 - coord.y;
     
     // pixelation
-    coords *= dimensions;
-    coords = dimensions/2.0 + pixelSize * floor((coords - dimensions/2.0) / vec2(pixelSize, pixelSize));
-    coords /= dimensions;
-    vec4 texture = texture2D(texture, coords);
+    coord *= dimensions;
+    coord = dimensions/2.0 + pixelSize * floor((coord - dimensions/2.0) / vec2(pixelSize, pixelSize));
+    coord /= dimensions;
+    vec4 texture = texture2D(texture, coord);
   
     // fade
     texture.rgba *= opacity;
