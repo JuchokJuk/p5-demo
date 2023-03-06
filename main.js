@@ -22,11 +22,11 @@ sketch.preload = () => {
 }
 
 sketch.setup = () => {
-  buffer = createGraphics(windowWidth, windowHeight, WEBGL);
   createCanvas(windowWidth, windowHeight, WEBGL);
   noStroke();
+
+  buffer = createGraphics(windowWidth, windowHeight, WEBGL);
   buffer.noStroke();
-  setAttributes('premultipliedAlpha', false);
   buffer.setAttributes('premultipliedAlpha', false);
 }
 
@@ -72,4 +72,3 @@ sketch.draw = () => {
   rect(0, 0, width, height);
   tick++;
 }
-
