@@ -25,6 +25,7 @@ sketch.setup = () => {
   buffer = createGraphics(windowWidth, windowHeight, WEBGL);
   createCanvas(windowWidth, windowHeight, WEBGL);
   noStroke();
+  buffer.noStroke();
 }
 
 sketch.windowResized = () => {
@@ -48,8 +49,8 @@ const opacityMax = 1;
 
 sketch.draw = () => {
   image(buffer, 0, 0);
-  buffer.background(0);
-  background(0)
+  buffer.background(0, 0, 0, 0);
+  background(0, 0, 0, 0);
 
   noiseShader.setUniform('texture', video);
   noiseShader.setUniform('time', tick);
