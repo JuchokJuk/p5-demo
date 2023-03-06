@@ -26,6 +26,8 @@ sketch.setup = () => {
   createCanvas(windowWidth, windowHeight, WEBGL);
   noStroke();
   buffer.noStroke();
+  setAttributes('premultipliedAlpha', false);
+  buffer.setAttributes('premultipliedAlpha', false);
 }
 
 sketch.windowResized = () => {
